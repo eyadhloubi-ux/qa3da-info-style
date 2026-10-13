@@ -1,0 +1,35 @@
+# Render Blueprint — موقع ثابت (Static Site) بدون أي بناء
+# Render بيقرا هالملف لحاله لما تعمل New > Blueprint وتختار الريبو.
+services:
+  - type: web
+    name: qa3da-info-style
+    runtime: static
+    buildCommand: echo "No build needed"
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: false
+    headers:
+      # الصفحة نفسها ما بتنحفظ بالكاش، فأي تعديل بيوصل للناس فوراً
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+      - path: /
+        name: Cache-Control
+        value: no-cache
+      # الصور والأيقونة بتنحفظ يوم كامل
+      - path: /*.png
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /*.svg
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    routes:
+      # أي رابط غلط بيرجع على الاستبيان بدل صفحة خطأ
+      - type: rewrite
+        source: /*
+        destination: /index.html
